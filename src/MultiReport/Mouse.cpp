@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "Mouse.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "DescriptorPrimitives.h"
 
 static const uint8_t _hidMultiReportDescriptorMouse[] PROGMEM = {
@@ -114,3 +116,4 @@ void Mouse_::SendReport(void* data, int length) {
 }
 
 Mouse_ Mouse;
+#endif

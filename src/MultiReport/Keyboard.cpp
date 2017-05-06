@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "Keyboard.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "DescriptorPrimitives.h"
 
 static const uint8_t _hidMultiReportDescriptorKeyboard[] PROGMEM = {
@@ -183,3 +185,4 @@ void Keyboard_::releaseAll(void) {
 }
 
 Keyboard_ Keyboard;
+#endif

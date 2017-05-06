@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "ConsumerControl.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "DescriptorPrimitives.h"
 
 static const uint8_t _hidMultiReportDescriptorConsumer[] PROGMEM = {
@@ -92,3 +94,4 @@ void ConsumerControl_::SendReport(void* data, int length) {
 }
 
 ConsumerControl_ ConsumerControl;
+#endif

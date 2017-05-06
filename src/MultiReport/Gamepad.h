@@ -25,6 +25,8 @@ THE SOFTWARE.
 #pragma once
 
 #include <Arduino.h>
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "PluggableUSB.h"
 #include "HID.h"
 #include "HID-Settings.h"
@@ -122,4 +124,4 @@ class Gamepad_ {
     HID_GamepadReport_Data_t _report;
 };
 extern Gamepad_ Gamepad;
-
+#endif

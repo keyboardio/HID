@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "AbsoluteMouse.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "DescriptorPrimitives.h"
 
 static const uint8_t _hidMultiReportDescriptorAbsoluteMouse[] PROGMEM = {
@@ -150,3 +152,4 @@ bool AbsoluteMouse_::isPressed(uint8_t b) {
 
 
 AbsoluteMouse_ AbsoluteMouse;
+#endif
