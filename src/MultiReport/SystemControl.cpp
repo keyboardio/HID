@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "SystemControl.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "DescriptorPrimitives.h"
 
 static const uint8_t _hidMultiReportDescriptorSystem[] PROGMEM = {
@@ -83,3 +85,4 @@ void SystemControl_::SendReport(void* data, int length) {
 }
 
 SystemControl_ SystemControl;
+#endif

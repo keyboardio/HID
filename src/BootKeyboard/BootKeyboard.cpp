@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "BootKeyboard.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 
 static const uint8_t _hidReportDescriptorKeyboard[] PROGMEM = {
   //  Keyboard
@@ -305,3 +307,4 @@ void BootKeyboard_::releaseAll(void) {
 }
 
 BootKeyboard_ BootKeyboard;
+#endif

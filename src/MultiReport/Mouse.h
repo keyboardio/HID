@@ -25,6 +25,8 @@ THE SOFTWARE.
 #pragma once
 
 #include <Arduino.h>
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "PluggableUSB.h"
 #include "HID.h"
 #include "HID-Settings.h"
@@ -59,3 +61,4 @@ class Mouse_ {
   void buttons(uint8_t b);
 };
 extern Mouse_ Mouse;
+#endif

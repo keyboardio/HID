@@ -38,6 +38,8 @@ THE SOFTWARE.
 
 #include "LEDs.h"
 
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 
 // Include all HID libraries (.a linkage required to work) properly
 #include "MultiReport/AbsoluteMouse.h"
@@ -46,5 +48,6 @@ THE SOFTWARE.
 #include "MultiReport/Gamepad.h"
 #include "MultiReport/SystemControl.h"
 #include "MultiReport/Keyboard.h"
-
 #include "BootKeyboard/BootKeyboard.h"
+
+#endif // KEYBOARDIO_HAS_PLUGGABLE_USB

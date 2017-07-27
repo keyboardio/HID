@@ -22,6 +22,8 @@ THE SOFTWARE.
 */
 
 #include "Gamepad.h"
+#include "HID-Compatibility.h"
+#ifdef KEYBOARDIO_HAS_PLUGGABLE_USB
 #include "DescriptorPrimitives.h"
 
 static const uint8_t _hidMultiReportDescriptorGamepad[] PROGMEM = {
@@ -158,3 +160,4 @@ void Gamepad_::SendReport(void* data, int length) {
 }
 
 Gamepad_ Gamepad;
+#endif
