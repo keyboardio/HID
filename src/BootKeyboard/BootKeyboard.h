@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "HID-Settings.h"
 #include "HIDTables.h"
 #include "HIDAliases.h"
+#include "BootKeyboard/BootKeyboardAPI.h"
 
 typedef union {
   // Low level key report: up to 6 keys and shift, ctrl etc at once
@@ -40,8 +41,7 @@ typedef union {
   uint8_t keys[7];
 } HID_BootKeyboardReport_Data_t;
 
-
-class BootKeyboard_ : public PluggableUSBModule {
+class BootKeyboard_ : public PluggableUSBModule, public BootKeyboardAPI {
  public:
   BootKeyboard_(void);
   size_t press(uint8_t);
