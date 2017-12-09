@@ -125,20 +125,29 @@ void Keyboard_::begin(void) {
   // while the sender is resetted.
   releaseAll();
   sendReportUnchecked();
+
+  if (bootKeyboard)
+    bootKeyboard->begin();
 }
 
 
 void Keyboard_::end(void) {
   releaseAll();
   sendReportUnchecked();
+
+  if (bootKeyboard)
+    bootKeyboard->end();
 }
 
 int Keyboard_::sendReportUnchecked(void) {
     return HID().SendReport(HID_REPORTID_NKRO_KEYBOARD, &keyReport, sizeof(keyReport));
 }
 
-
 int Keyboard_::sendReport(void) {
+  if (bootKeyboard && bootKeyboard->getProtocol() == HID_BOOT_PROTOCOL ) {
+    return bootKeyboard->sendReport();
+  }
+
   // If the last report is different than the current report, then we need to send a report.
   // We guard sendReport like this so that calling code doesn't end up spamming the host with empty reports
   // if sendReport is called in a tight loop.
@@ -156,6 +165,10 @@ int Keyboard_::sendReport(void) {
  * Returns false in all other cases
  * */
 boolean Keyboard_::isModifierActive(uint8_t k) {
+  if (bootKeyboard && bootKeyboard->getProtocol() == HID_BOOT_PROTOCOL) {
+    return bootKeyboard->isModifierActive(k);
+  }
+
   if (k >= HID_KEYBOARD_FIRST_MODIFIER && k <= HID_KEYBOARD_LAST_MODIFIER) {
     k = k - HID_KEYBOARD_FIRST_MODIFIER;
     return !!(keyReport.modifiers & (1 << k));
@@ -167,6 +180,10 @@ boolean Keyboard_::isModifierActive(uint8_t k) {
  * Returns false in all other cases
  * */
 boolean Keyboard_::wasModifierActive(uint8_t k) {
+  if (bootKeyboard && bootKeyboard->getProtocol() == HID_BOOT_PROTOCOL) {
+    return bootKeyboard->wasModifierActive(k);
+  }
+
   if (k >= HID_KEYBOARD_FIRST_MODIFIER && k <= HID_KEYBOARD_LAST_MODIFIER) {
     k = k - HID_KEYBOARD_FIRST_MODIFIER;
     return !!(lastKeyReport.modifiers & (1 << k));
@@ -175,6 +192,10 @@ boolean Keyboard_::wasModifierActive(uint8_t k) {
 }
 
 size_t Keyboard_::press(uint8_t k) {
+  if (bootKeyboard && bootKeyboard->getProtocol() == HID_BOOT_PROTOCOL) {
+    return bootKeyboard->press(k);
+  }
+
   // If the key is in the range of 'printable' keys
   if (k <= HID_LAST_KEY) {
     uint8_t bit = 1 << (uint8_t(k) % 8);
@@ -195,6 +216,10 @@ size_t Keyboard_::press(uint8_t k) {
 }
 
 size_t Keyboard_::release(uint8_t k) {
+  if (bootKeyboard && bootKeyboard->getProtocol() == HID_BOOT_PROTOCOL) {
+    return bootKeyboard->release(k);
+  }
+
   // If we're releasing a printable key
   if (k <= HID_LAST_KEY) {
     uint8_t bit = 1 << (k % 8);
@@ -215,6 +240,10 @@ size_t Keyboard_::release(uint8_t k) {
 }
 
 void Keyboard_::releaseAll(void) {
+  if (bootKeyboard && bootKeyboard->getProtocol() == HID_BOOT_PROTOCOL ) {
+    return bootKeyboard->releaseAll();
+  }
+
   // Release all keys
   memset(&keyReport.allkeys, 0x00, sizeof(keyReport.allkeys));
 }

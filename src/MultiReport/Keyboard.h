@@ -32,6 +32,8 @@ THE SOFTWARE.
 #include "HIDTables.h"
 #include "HIDAliases.h"
 
+#include "BootKeyboard/BootKeyboardAPI.h"
+
 #define KEY_BYTES 28
 
 typedef union {
@@ -63,6 +65,8 @@ class Keyboard_ {
 
   HID_KeyboardReport_Data_t keyReport;
   HID_KeyboardReport_Data_t lastKeyReport;
+
+  BootKeyboardAPI *bootKeyboard = NULL;
  private:
   int sendReportUnchecked(void);
 };

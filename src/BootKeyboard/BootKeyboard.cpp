@@ -39,17 +39,6 @@ static const uint8_t _hidReportDescriptorKeyboard[] PROGMEM = {
   0x95, 0x08,                      /*   REPORT_COUNT (8) */
   0x81, 0x02,                      /*   INPUT (Data,Var,Abs) */
 
-  /* Reserved byte, used for consumer reports, only works with linux */
-  /* NOT CURRENTLY USED BY THIS IMPLEMENTATION */
-  0x05, 0x0C,             		 /*   Usage Page (Consumer) */
-  0x95, 0x01,                      /*   REPORT_COUNT (1) */
-  0x75, 0x08,                      /*   REPORT_SIZE (8) */
-  0x15, 0x00,                      /*   LOGICAL_MINIMUM (0) */
-  0x26, 0xFF, 0x00,                /*   LOGICAL_MAXIMUM (255) */
-  0x19, 0x00,                      /*   USAGE_MINIMUM (0) */
-  0x29, 0xFF,                      /*   USAGE_MAXIMUM (255) */
-  0x81, 0x00,                      /*   INPUT (Data,Ary,Abs) */
-
   /* 5 LEDs for num lock etc, 3 left for advanced, custom usage */
   0x05, 0x08,						 /*   USAGE_PAGE (LEDs) */
   0x19, 0x01,						 /*   USAGE_MINIMUM (Num Lock) */
@@ -103,7 +92,7 @@ int BootKeyboard_::getDescriptor(USBSetup& setup) {
 
   // Reset the protocol on reenumeration. Normally the host should not assume the state of the protocol
   // due to the USB specs, but Windows and Linux just assumes its in report mode.
-  protocol = HID_REPORT_PROTOCOL;
+  protocol = default_protocol;
 
   return USB_SendControl(TRANSFER_PGM, _hidReportDescriptorKeyboard, sizeof(_hidReportDescriptorKeyboard));
 }
@@ -207,8 +196,18 @@ uint8_t BootKeyboard_::getProtocol(void) {
   return protocol;
 }
 
+void BootKeyboard_::setProtocol(uint8_t protocol) {
+  this->protocol = protocol;
+}
+
 int BootKeyboard_::sendReport(void) {
-  return USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_keyReport, sizeof(_keyReport));
+  if (memcmp(&_lastKeyReport, &_keyReport, sizeof(_keyReport))) {
+    // if the two reports are different, send a report
+    int returnCode = USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_keyReport, sizeof(_keyReport));
+    memcpy(&_lastKeyReport, &_keyReport, sizeof(_keyReport));
+    return returnCode;
+  }
+  return -1;
 }
 
 void BootKeyboard_::wakeupHost(void) {
@@ -302,6 +301,28 @@ size_t BootKeyboard_::release(uint8_t k) {
 
 void BootKeyboard_::releaseAll(void) {
   memset(&_keyReport.keys, 0x00, sizeof(_keyReport.keys));
+}
+
+/* Returns true if the modifer key passed in will be sent during this key report
+ * Returns false in all other cases
+ * */
+boolean BootKeyboard_::isModifierActive(uint8_t k) {
+  if (k >= HID_KEYBOARD_FIRST_MODIFIER && k <= HID_KEYBOARD_LAST_MODIFIER) {
+    k = k - HID_KEYBOARD_FIRST_MODIFIER;
+    return !!(_keyReport.modifiers & (1 << k));
+  }
+  return false;
+}
+
+/* Returns true if the modifer key passed in was being sent during the previous key report
+ * Returns false in all other cases
+ * */
+boolean BootKeyboard_::wasModifierActive(uint8_t k) {
+  if (k >= HID_KEYBOARD_FIRST_MODIFIER && k <= HID_KEYBOARD_LAST_MODIFIER) {
+    k = k - HID_KEYBOARD_FIRST_MODIFIER;
+    return !!(_lastKeyReport.modifiers & (1 << k));
+  }
+  return false;
 }
 
 BootKeyboard_ BootKeyboard;

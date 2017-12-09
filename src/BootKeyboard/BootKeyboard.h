@@ -30,19 +30,18 @@ THE SOFTWARE.
 #include "HID-Settings.h"
 #include "HIDTables.h"
 #include "HIDAliases.h"
+#include "BootKeyboard/BootKeyboardAPI.h"
 
 typedef union {
   // Low level key report: up to 6 keys and shift, ctrl etc at once
   struct {
     uint8_t modifiers;
-    uint8_t reserved;
     uint8_t keycodes[6];
   };
-  uint8_t keys[8];
+  uint8_t keys[7];
 } HID_BootKeyboardReport_Data_t;
 
-
-class BootKeyboard_ : public PluggableUSBModule {
+class BootKeyboard_ : public PluggableUSBModule, public BootKeyboardAPI {
  public:
   BootKeyboard_(void);
   size_t press(uint8_t);
@@ -53,10 +52,12 @@ class BootKeyboard_ : public PluggableUSBModule {
 
   int sendReport(void);
 
-
+  boolean isModifierActive(uint8_t k);
+  boolean wasModifierActive(uint8_t k);
 
   uint8_t getLeds(void);
   uint8_t getProtocol(void);
+  void setProtocol(uint8_t protocol);
   void wakeupHost(void);
 
   void setFeatureReport(void* report, int length) {
@@ -84,9 +85,10 @@ class BootKeyboard_ : public PluggableUSBModule {
     featureLength |= 0x8000;
   }
 
+  uint8_t default_protocol = HID_REPORT_PROTOCOL;
 
  protected:
-  HID_BootKeyboardReport_Data_t _keyReport;
+  HID_BootKeyboardReport_Data_t _keyReport, _lastKeyReport;
 
   // Implementation of the PUSBListNode
   int getInterface(uint8_t* interfaceCount);
