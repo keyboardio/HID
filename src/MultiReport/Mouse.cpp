@@ -52,14 +52,6 @@ static const uint8_t _hidMultiReportDescriptorMouse[] PROGMEM = {
   D_REPORT_COUNT, 0x03,                           //     REPORT_COUNT (3)
   D_INPUT, (D_DATA|D_VARIABLE|D_RELATIVE),        //     INPUT (Data,Var,Rel)
 
-  /* Horizontal wheel */
-  D_USAGE_PAGE, D_PAGE_CONSUMER,                  //    USAGE_PAGE (Consumer)
-  D_PAGE_ORDINAL, 0x38, 0x02,                     //     PAGE (AC Pan)
-  D_LOGICAL_MINIMUM, 0x81,                        //     LOGICAL_MINIMUM (-127)
-  D_LOGICAL_MAXIMUM, 0x7f,                        //     LOGICAL_MAXIMUM (127)
-  D_REPORT_SIZE, 0x08,                            //     REPORT_SIZE (8)
-  D_INPUT, (D_DATA|D_VARIABLE|D_RELATIVE),        //     INPUT (Data,Var,Rel)
-
   /* End */
   D_END_COLLECTION                                // END_COLLECTION
 };
@@ -110,7 +102,7 @@ bool Mouse_::isPressed(uint8_t b) {
 }
 
 void Mouse_::sendReportUnchecked(void) {
-  HID().SendReport(HID_REPORTID_MOUSE, &report, sizeof(report));
+  HID().SendReport(HID_REPORTID_MOUSE, &report, sizeof(report)-1);
 }
 
 void Mouse_::sendReport(void) {
