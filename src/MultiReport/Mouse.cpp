@@ -41,15 +41,22 @@ static const uint8_t _hidMultiReportDescriptorMouse[] PROGMEM = {
   D_REPORT_SIZE, 0x01,                            //     REPORT_SIZE (1)
   D_INPUT, (D_DATA|D_VARIABLE|D_ABSOLUTE),        //     INPUT (Data,Var,Abs)
 
-  /* X, Y, Wheel */
+  /* X, Y */
   D_USAGE_PAGE, D_PAGE_GENERIC_DESKTOP,           //    USAGE_PAGE (Generic Desktop)
   D_USAGE, 0x30,                                  //     USAGE (X)
   D_USAGE, 0x31,                                  //     USAGE (Y)
+  D_LOGICAL_MINIMUM, 0x81,                        //     LOGICAL_MINIMUM (-127)
+  D_LOGICAL_MAXIMUM, 0x7f,                        //     LOGICAL_MAXIMUM (127)
+  D_REPORT_SIZE, 0x08,                            //     REPORT_SIZE (8)
+  D_REPORT_COUNT, 0x02,                           //     REPORT_COUNT (1)
+  D_INPUT, (D_DATA|D_VARIABLE|D_RELATIVE),        //     INPUT (Data,Var,Rel)
+
+  /* Vertical wheel */
   D_USAGE, 0x38,                                  //     USAGE (Wheel)
   D_LOGICAL_MINIMUM, 0x81,                        //     LOGICAL_MINIMUM (-127)
   D_LOGICAL_MAXIMUM, 0x7f,                        //     LOGICAL_MAXIMUM (127)
   D_REPORT_SIZE, 0x08,                            //     REPORT_SIZE (8)
-  D_REPORT_COUNT, 0x03,                           //     REPORT_COUNT (3)
+  D_REPORT_COUNT, 0x01,                           //     REPORT_COUNT (1)
   D_INPUT, (D_DATA|D_VARIABLE|D_RELATIVE),        //     INPUT (Data,Var,Rel)
 
   /* Horizontal wheel */
