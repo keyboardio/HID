@@ -149,6 +149,15 @@ int Keyboard_::sendReport(void) {
     int returnCode = HID().SendReport(HID_REPORTID_NKRO_KEYBOARD, &lastKeyReport, sizeof(lastKeyReport));
     if (returnCode < 0)
       lastKeyReport.modifiers = last_mods;
+    // For Windows Remote Desktop, the problem is even worse. Even if the modifier is sent
+    // in a separate report, if one or more other keycodes are added in a subsequent
+    // report that comes too soon (probably before the next "frame" is sent to the remote
+    // host), it seems that the two reports get combined, and we once again see the
+    // problem. So, if both a modifier keycode and a non-modified keycode have changed in
+    // one report, we add a delay between the modifier report (sent above) and the other
+    // report (sent below). 10ms seems to work well.
+    if (memcmp(lastKeyReport.keys, keyReport.keys, sizeof(keyReport.keys)))
+      delay(10);
   }
 
   // If the last report is different than the current report, then we need to send a report.
