@@ -149,6 +149,8 @@ int Keyboard_::sendReport(void) {
     int returnCode = HID().SendReport(HID_REPORTID_NKRO_KEYBOARD, &lastKeyReport, sizeof(lastKeyReport));
     if (returnCode < 0)
       lastKeyReport.modifiers = last_mods;
+
+#if defined(KEYBOARDIOHID_ENABLE_WINDOWS_REMOTE_DESKTOP_WORKAROUND)
     // For Windows Remote Desktop, the problem is even worse. Even if the modifier is sent
     // in a separate report, if one or more other keycodes are added in a subsequent
     // report that comes too soon (probably before the next "frame" is sent to the remote
@@ -158,6 +160,8 @@ int Keyboard_::sendReport(void) {
     // report (sent below). 10ms seems to work well.
     if (memcmp(lastKeyReport.keys, keyReport.keys, sizeof(keyReport.keys)))
       delay(10);
+#endif
+
   }
 
   // If the last report is different than the current report, then we need to send a report.
