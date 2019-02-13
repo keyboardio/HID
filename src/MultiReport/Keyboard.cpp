@@ -257,4 +257,20 @@ void Keyboard_::releaseAll(void) {
   memset(&keyReport.allkeys, 0x00, sizeof(keyReport.allkeys));
 }
 
+/* Saves a backup copy of the current report, then copies the previous report to the
+ * current one. This should be called by a plugin (via HIDAdaptor) that needs to send a
+ * report mid-cycle, when the current keyboard report is incomplete.
+ * */
+void Keyboard_::stashReport() {
+  stashed_key_report_ = keyReport;
+  keyReport = lastKeyReport;
+}
+
+/* Restores the stashed copy of the current keyboard report
+ * Should be called by a plugin (via HIDAdaptor) after a mid-cycle report is sent
+ * */
+void Keyboard_::restoreReport() {
+  keyReport = stashed_key_report_;
+}
+
 Keyboard_ Keyboard;

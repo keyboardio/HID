@@ -359,4 +359,20 @@ boolean BootKeyboard_::wasAnyModifierActive() {
   return _lastKeyReport.modifiers > 0;
 }
 
+/* Saves a backup copy of the current report, then copies the previous report to the
+ * current one. This should be called by a plugin (via HIDAdaptor) that needs to send a
+ * report mid-cycle, when the current keyboard report is incomplete.
+ * */
+void BootKeyboard_::stashReport() {
+  stashed_key_report_ = _keyReport;
+  _keyReport = _lastKeyReport;
+}
+
+/* Restores the stashed copy of the current keyboard report
+ * Should be called by a plugin (via HIDAdaptor) after a mid-cycle report is sent
+ * */
+void BootKeyboard_::restoreReport() {
+  _keyReport = stashed_key_report_;
+}
+
 BootKeyboard_ BootKeyboard;
