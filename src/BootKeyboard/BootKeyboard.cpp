@@ -141,6 +141,11 @@ bool BootKeyboard_::setup(USBSetup& setup) {
     }
     if (request == HID_GET_PROTOCOL) {
       // TODO improve
+      // This is where the `protocol` variable is used to set...something, but I don't
+      // know what. With the change that I've made to use `boot_protocol_` instead, this
+      // would always be set to `HID_REPORT_PROTOCOL`, even when sending boot protocol
+      // reports (successfully). It doesn't seem correct, but it works on macOS and Linux
+      // (or at least, my old Ubuntu machine).
       UEDATX = protocol;
       return true;
     }
