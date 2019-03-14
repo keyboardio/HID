@@ -216,7 +216,7 @@ int BootKeyboard_::sendReport(void) {
     Serial.print(F("sending boot report: "));
     for (byte i{0}; i < 8; ++i) {
       Serial.print(F(" "));
-      Serial.print(int(_keyReport.bytes[i]));
+      Serial.print(_keyReport.bytes[i], HEX);
     }
     Serial.println();
     // if the two reports are different, send a report
