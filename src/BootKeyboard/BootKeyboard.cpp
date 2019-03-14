@@ -196,15 +196,29 @@ uint8_t BootKeyboard_::getLeds(void) {
 }
 
 uint8_t BootKeyboard_::getProtocol(void) {
-  return protocol;
+  if (boot_protocol_) {
+    return HID_BOOT_PROTOCOL;
+  } else {
+    return HID_REPORT_PROTOCOL;
+  }
 }
 
 void BootKeyboard_::setProtocol(uint8_t protocol) {
-  this->protocol = protocol;
+  if (protocol == HID_BOOT_PROTOCOL) {
+    boot_protocol_ = true;
+  } else {
+    boot_protocol_ = false;
+  }
 }
 
 int BootKeyboard_::sendReport(void) {
   if (memcmp(&_lastKeyReport, &_keyReport, sizeof(_keyReport))) {
+    Serial.print(F("sending boot report: "));
+    for (byte i{0}; i < 8; ++i) {
+      Serial.print(F(" "));
+      Serial.print(int(_keyReport.bytes[i]));
+    }
+    Serial.println();
     // if the two reports are different, send a report
     int returnCode = USB_Send(pluggedEndpoint | TRANSFER_RELEASE, &_keyReport, sizeof(_keyReport));
     memcpy(&_lastKeyReport, &_keyReport, sizeof(_keyReport));

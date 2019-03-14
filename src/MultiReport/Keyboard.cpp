@@ -98,6 +98,12 @@ void Keyboard_::end(void) {
 }
 
 int Keyboard_::sendReportUnchecked(void) {
+  Serial.print(F("sending nkro report:"));
+  for (byte i{0}; i < 29; ++i) {
+    Serial.print(F(" "));
+    Serial.print(int(keyReport.allkeys[i]));
+  }
+  Serial.println();
     return HID().SendReport(HID_REPORTID_NKRO_KEYBOARD, &keyReport, sizeof(keyReport));
 }
 
