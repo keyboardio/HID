@@ -24,21 +24,36 @@ THE SOFTWARE.
 
 #pragma once
 
+#ifdef KALEIDOSCOPE_VIRTUAL_BUILD
+#undef T
+#undef U
+#undef min
+#undef max
+#undef TEST
+#include <functional>
+#endif
+
 #include <stdint.h>
 
-class HIDReportObserver
-{
-   public:
+class HIDReportObserver {
+ public:
 
-    typedef void(*SendReportHook)(uint8_t id, const void* data, 
-                                  int len, int result);
-    
-    static void observeReport(uint8_t id, const void* data, 
-                                  int len, int result) {
-       if(send_report_hook_) {
-          (*send_report_hook_)(id, data, len, result);
-       }
+#ifdef KALEIDOSCOPE_VIRTUAL_BUILD
+  typedef std::function<void(uint8_t, const void*, int, int)> SendReportHook;
+#else  // KALEIDOSCOPE_VIRTUAL_BUILD
+  typedef void(*SendReportHook)(
+      uint8_t id, const void* data, int len, int result);
+#endif  // KALEIDOSCOPE_VIRTUAL_BUILD
+
+  static void observeReport(uint8_t id, const void* data, int len, int result) {
+    if (send_report_hook_) {
+#ifdef KALEIDOSCOPE_VIRTUAL_BUILD
+      send_report_hook_(id, data, len, result);
+#else  // KALEIDOSCOPE_VIRTUAL_BUILD
+      (*send_report_hook_)(id, data, len, result);
+#endif  // KALEIDOSCOPE_VIRTUAL_BUILD
     }
+  }
       
     static SendReportHook currentHook() { return send_report_hook_; }
     
